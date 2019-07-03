@@ -1,1 +1,0 @@
-This readme file will be updated after project is finished.
