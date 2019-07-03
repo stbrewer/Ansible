@@ -1,0 +1,51 @@
+- name: Play 1
+  hosts: ACI_APIC
+  vars:
+    tenant: Demo_Tenant
+    bd: Demo_Bridge_Domain
+    vrf: Demo_VRF
+    description: Demo_Environment
+  connection: local
+  gather_facts: no
+
+  tasks:
+
+    - name: Add A Tenant
+      aci_tenant:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        tenant: "{{tenant}}"
+        description: Demo Environment
+        validate_certs: no
+        state: present
+      delegate_to: localhost
+
+    - name: Add A VRF
+      aci_vrf:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        vrf: "{{vrf}}"
+        tenant: "{{tenant}}"
+        description: "{{description}}"
+        policy_control_preference: enforced
+        policy_control_direction: ingress
+        state: present
+      delegate_to: localhost
+
+    - name: Add Bridge Domain
+      aci_bd:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        tenant: "{{tenant}}"
+        bd: "{{bd}}"
+        mac_address: 00:00:00:11:11:11
+        vrf: "{{vrf}}"
+        state: present
+      delegate_to: localhost
+
+

@@ -1,0 +1,24 @@
+- name: Information
+  hosts: ACI_APIC
+  vars:
+    tenant: Ansible_Dev_tenant
+    description: Ansible_Dev_Environment
+    vrf: Ansible_Dev_VRF
+    bd: Ansible_Dev_BD
+    ap: Ansible_Prod_Application_Profile
+  connection: local
+  gather_facts: no
+
+  tasks:
+
+    - name: Add A New Virtual Domain
+      aci_domain:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        domain: Ansible_Dev_VCENTER
+        domain_type: vmm
+        vm_provider: vmware
+        state: present
+      delegate_to: localhost

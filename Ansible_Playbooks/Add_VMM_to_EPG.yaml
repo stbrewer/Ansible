@@ -1,0 +1,32 @@
+- name: Information
+  hosts: ACI_APIC
+  vars:
+    tenant: Ansible_Dev_tenant
+    description: Ansible_Dev_Environment
+    vrf: Ansible_Dev_VRF
+    bd: Ansible_Dev_BD
+    ap: Ansible_Prod_Application_Profile
+    contract: Ansible_Contract
+    epg: Ansible_EPG
+    domain: Ansible_Dev_VCENTER
+    domain_type: vmm
+    vm_provider: vmware
+  connection: local
+  gather_facts: no
+
+  tasks:
+
+    - name: Attach Web EPG to VMM Domain
+      aci_epg_to_domain:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        tenant: "{{tenant}}"
+        epg: "{{EPG}}"
+        ap: "{{ap}}"
+        domain: "{{domain}}"
+        domain_type: "{{domain_type}}"
+        vm_provider: "{{vm_provider}}"
+        state: present
+      delegate_to: localhost

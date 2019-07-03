@@ -1,0 +1,56 @@
+- name: Play 1
+  hosts: ACI_APIC
+  vars:
+    tenant: Ansible_Dev_tenant
+    bd: Ansible_Dev_BD
+    vrf: Ansible_Dev_VRF
+    ap: Ansible_Prod_Microsegmented_EPG
+    description: Ansible_Dev_Environment
+    EPG1: Micro_Segment_EPG
+  connection: local
+  gather_facts: no
+
+  tasks:
+
+    - name: Add A New Application Profile
+      aci_ap:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        tenant: "{{tenant}}"
+        ap: "{{ap}}"
+        description: "{{description}}"
+        state: present
+      delegate_to: localhost      
+
+    - name: Add End Point Group App One
+      aci_epg:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        tenant: "{{tenant}}"
+        epg: "{{EPG1}}"
+        description: "{{description}}"
+        bd: "{{bd}}"
+        ap: "{{ap}}"
+        preferred_group: no
+        intra_epg_isolation: enforced
+        state: present
+      delegate_to: localhost
+
+    - name: Attach Web EPG to VMM Domain
+      aci_epg_to_domain:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        tenant: "{{tenant}}"
+        epg: "{{EPG1}}"
+        ap: "{{ap}}"
+        domain: Ansible_Dev_VCENTER
+        domain_type: vmm
+        vm_provider: vmware
+        state: present
+      delegate_to: localhost

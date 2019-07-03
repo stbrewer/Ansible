@@ -1,0 +1,213 @@
+- name: Play 1
+  hosts: ACI_APIC
+  vars:
+    tenant: Demo_Tenant
+    bd: Demo_Bridge_Domain
+    vrf: Demo_VRF
+    ap: Multi_Host_Application
+    description: Demo_Environment
+    EPG1: Web_Kubernetes_EPG
+    EPG2: App_VMware_EPG
+    EPG3: DB_Baremetal_EPG
+    contract_1: Kubernetes_VMware
+    contract_2: VMware_Baremetal
+    Contract_EPG_Association_1: Kubernetes_VMware
+    Contract_EPG_Association_2: Kubernetes_VMware
+    Contract_EPG_Association_3: VMware_Baremetal
+    Contract_EPG_Association_4: VMware_Baremetal
+    domain_kubernetes: Kubernetes_Domain
+    domain_type_kubernetes: vmm
+    vm_provider_kubernetes: kubernetes
+    domain_vmware: VMware_Domain
+    domain_type_vmware: vmm
+    vm_provider_vmware: vmware
+    domain_baremetal: Baremetal_Domain
+    domain_type_baremetal: phys
+
+  connection: local
+  gather_facts: no
+
+  tasks:
+
+    - name: Add A New Application Profile
+      aci_ap:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        tenant: "{{tenant}}"
+        ap: "{{ap}}"
+        description: "{{description}}"
+        state: present
+      delegate_to: localhost      
+
+    - name: Add End Point Group App One
+      aci_epg:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        tenant: "{{tenant}}"
+        epg: "{{EPG1}}"
+        description: "{{description}}"
+        bd: "{{bd}}"
+        ap: "{{ap}}"
+        preferred_group: yes
+        state: present
+      delegate_to: localhost
+
+    - name: Add End Point Group App One
+      aci_epg:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        tenant: "{{tenant}}"
+        epg: "{{EPG2}}"
+        description: "{{description}}"
+        bd: "{{bd}}"
+        ap: "{{ap}}"
+        preferred_group: yes
+        state: present
+      delegate_to: localhost
+
+    - name: Add End Point Group App One
+      aci_epg:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        tenant: "{{tenant}}"
+        epg: "{{EPG3}}"
+        description: "{{description}}"
+        bd: "{{bd}}"
+        ap: "{{ap}}"
+        preferred_group: yes
+        state: present
+      delegate_to: localhost
+
+    - name: Attach Web EPG to VMM Domain
+      aci_epg_to_domain:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        tenant: "{{tenant}}"
+        epg: "{{EPG1}}"
+        ap: "{{ap}}"
+        domain: "{{domain_kubernetes}}"
+        domain_type: "{{domain_type_kubernetes}}"
+        vm_provider: "{{vm_provider_kubernetes}}"
+        state: present
+      delegate_to: localhost
+
+    - name: Attach App EPG to VMM Domain
+      aci_epg_to_domain:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        tenant: "{{tenant}}"
+        epg: "{{EPG2}}"
+        ap: "{{ap}}"
+        domain: "{{domain_vmware}}"
+        domain_type: "{{domain_type_vmware}}"
+        vm_provider: "{{vm_provider_vmware}}"
+        state: present
+      delegate_to: localhost
+
+    - name: Attach DB EPG to Baremetal Domain
+      aci_epg_to_domain:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        tenant: "{{tenant}}"
+        epg: "{{EPG3}}"
+        ap: "{{ap}}"
+        domain: "{{domain_baremetal}}"
+        domain_type: "{{domain_type_baremetal}}"
+        state: present
+      delegate_to: localhost
+
+    - name: Add A New Contract
+      aci_contract:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        tenant: "{{tenant}}"
+        contract: "{{contract_1}}"
+        description: "{{description}}"
+        scope: application-profile
+        state: present
+        validate_certs: no
+      delegate_to: localhost
+
+    - name: Add A New Contract
+      aci_contract:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        tenant: "{{tenant}}"
+        contract: "{{contract_2}}"
+        description: "{{description}}"
+        scope: application-profile
+        state: present
+        validate_certs: no
+      delegate_to: localhost
+
+    - name: Add A New Contract To Web EPG to App EPG
+      aci_epg_to_contract:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        tenant: "{{tenant}}"
+        epg: "{{EPG1}}"
+        ap: "{{ap}}"
+        contract: "{{Contract_EPG_Association_1}}"
+        contract_type: provider
+        state: present
+      delegate_to: localhost
+
+    - name: Add A New Contract To App EPG to Web EPG
+      aci_epg_to_contract:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        tenant: "{{tenant}}"
+        epg: "{{EPG2}}"
+        ap: "{{ap}}"
+        contract: "{{Contract_EPG_Association_2}}"
+        contract_type: consumer
+        state: present
+      delegate_to: localhost
+
+    - name: Add A New Contract To App EPG to DB EPG
+      aci_epg_to_contract:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        tenant: "{{tenant}}"
+        epg: "{{EPG2}}"
+        ap: "{{ap}}"
+        contract: "{{Contract_EPG_Association_3}}"
+        contract_type: provider
+        state: present
+      delegate_to: localhost
+
+    - name: Add A New Contract To DB EPG to App EPG
+      aci_epg_to_contract:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        tenant: "{{tenant}}"
+        epg: "{{EPG3}}"
+        ap: "{{ap}}"
+        contract: "{{Contract_EPG_Association_4}}"
+        contract_type: consumer
+        state: present
+      delegate_to: localhost

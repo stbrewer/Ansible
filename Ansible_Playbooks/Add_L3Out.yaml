@@ -1,0 +1,28 @@
+- name: Information
+  hosts: ACI_APIC
+  vars:
+    tenant: Ansible_Dev_tenant
+    description: Ansible_Dev_Environment
+    vrf: Ansible_Dev_VRF
+    bd: Ansible_Dev_BD
+    l3protocol: ospf
+    l3out: Ansible_L3_Out
+  connection: local
+  gather_facts: no
+
+  tasks:
+
+    - name: Add A New Layer 3 Out
+      aci_l3out:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        tenant: "{{tenant}}"
+        l3out: "{{l3out}}"
+        domain: "{{domain}}"
+        vrf: "{{vrf}}"
+        route_control: export
+        l3protocol: "{{l3protocol}}"
+        validate_certs: no
+        state: present
+      delegate_to: localhost

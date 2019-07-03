@@ -1,0 +1,23 @@
+- name: Play 1
+  hosts: ACI_APIC
+  vars:
+    tenant: Ansible_Dev_tenant
+    bd: Ansible_Dev_BD
+    vrf: Ansible_Dev_VRF
+    ap: Ansible_Prod_Microsegmented_EPG
+    description: Ansible_Dev_Environment
+    EPG1: Micro_Segment_EPG
+  connection: local
+  gather_facts: no
+
+  tasks:
+
+    - name: Query all EPGs of an App Profile
+      aci_epg:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: false
+        register: query_result
+        ap: Ansible_Prod_Microsegmented_EPG
+        state: query

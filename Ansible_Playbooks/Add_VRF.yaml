@@ -1,0 +1,24 @@
+- name: Information
+  hosts: ACI_APIC
+  vars:
+    tenant: Ansible_Dev_tenant
+    description: Ansible_Dev_Environment
+    vrf: Ansible_Dev_VRF
+  connection: local
+  gather_facts: no
+
+  tasks:
+
+    - name: Add A VRF
+      aci_vrf:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        vrf: "{{vrf}}"
+        tenant: "{{tenant}}"
+        description: "{{description}}"
+        policy_control_preference: enforced
+        policy_control_direction: ingress
+        state: present
+      delegate_to: localhost

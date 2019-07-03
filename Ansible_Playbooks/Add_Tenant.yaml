@@ -1,0 +1,20 @@
+- name: Information
+  hosts: ACI_APIC
+  vars:
+    tenant: Ansible_Dev_tenant
+    description: Ansible_Dev_Environment
+  connection: local
+  gather_facts: no
+
+  tasks:
+
+    - name: Add A Tenant
+      aci_tenant:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        tenant: "{{tenant}}"
+        description: Production tenant
+        validate_certs: no
+        state: present
+      delegate_to: localhost

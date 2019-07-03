@@ -1,0 +1,24 @@
+- name: Information
+  hosts: ACI_APIC
+  vars:
+    tenant: Ansible_Dev_tenant
+    description: Ansible_Dev_Environment
+    vrf: Ansible_Dev_VRF
+    bd: Ansible_Dev_BD
+  connection: local
+  gather_facts: no
+
+  tasks:
+
+    - name: Add Bridge Domain
+      aci_bd:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        tenant: "{{tenant}}"
+        bd: "{{bd}}"
+        mac_address: 00:00:00:11:11:11
+        vrf: "{{vrf}}"
+        state: present
+      delegate_to: localhost
